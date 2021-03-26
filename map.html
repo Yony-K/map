@@ -14,6 +14,18 @@
 		        center: new kakao.maps.LatLng(37.56602, 126.98239), // 지도의 중심좌표
 		        level: 5, // 지도의 확대 레벨
 		        mapTypeId : kakao.maps.MapTypeId.HYBRID // 지도종류
+			target : 'map',
+		        layers : [new ol.layer.Tile({
+		            source : new ol.source.TileWMS({
+		                url : 'http://egisapp.me.go.kr/geoserver/wms?'
+		                ,params : {'LAYERS' : 'EGIS:lv3_10th_g','TILED' : true,'SRS' : 'EPSG:900913'}
+		            })
+		        })],
+		        view : new ol.View({
+		            center : ol.proj.transform([ 127, 36.5 ], 'EPSG:4326', 'EPSG:900913')
+		            ,zoom : 7
+		            ,enableRotation : false
+		        })
 		    }; 
 
 		// 지도를 생성한다 
@@ -71,20 +83,6 @@
 	    
 		});
 
-		    var map = new ol.Map({
-		        target : 'map',
-		        layers : [new ol.layer.Tile({
-		            source : new ol.source.TileWMS({
-		                url : 'http://egisapp.me.go.kr/geoserver/wms?'
-		                ,params : {'LAYERS' : 'EGIS:lv1_1980yr','TILED' : true,'SRS' : 'EPSG:900913'}
-		            })
-		        })],
-		        view : new ol.View({
-		            center : ol.proj.transform([ 127, 36.5 ], 'EPSG:4326', 'EPSG:900913')
-		            ,zoom : 7
-		            ,enableRotation : false
-		        })
-		    });
 		
 		
 	</script>
