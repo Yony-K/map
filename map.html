@@ -19,18 +19,7 @@
 
 		// 지도를 생성한다 
 		var map = new kakao.maps.Map(mapContainer, mapOption); 
-			target : 'map',
-		        layers : [new kakao.layer.Tile({
-		            source : new kakao.source.TileWMS({
-		                url : 'http://egisapp.me.go.kr/geoserver/wms?'
-		                ,params : {'LAYERS' : 'EGIS:lv3_10th_g','TILED' : true,'SRS' : 'EPSG:900913'}
-		            })
-		        })],
-		        view : new kakao.View({
-		            center : kakao.proj.transform([ 127, 36.5 ], 'EPSG:4326', 'EPSG:900913')
-		            ,zoom : 7
-		            ,enableRotation : false
-		        })
+
 		// 지도 타입 변경 컨트롤을 생성한다
 		var mapTypeControl = new kakao.maps.MapTypeControl();
 
@@ -80,6 +69,7 @@
 							'지도의 중심 좌표는 ' + map.getCenter().toString() +' 입니다.';
 			console.log(message);
 
+		
 	    
 		});
 
