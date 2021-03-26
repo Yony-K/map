@@ -1,440 +1,74 @@
-
-
-
-
-
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-<meta charset="utf-8">
-<meta content="IE=edge" http-equiv="X-UA-Compatible">
-<title>자연환경조사-</title>
-<!--[if gt IE 5.5]> 
-    <style rel="stylesheet" type="text/css">
-		.ui-accordion-content{ height:auto !important; }
-	</style> 
-<![endif]-->
-    
-	<link href="/css/com/jquery-ui/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <link href="/css/com/jquery-ui/jquery-ui.theme.css" type="text/css" rel="stylesheet" />
-    <link href="/css/com/ol/ol.css" type="text/css" rel="stylesheet" />
-    <script type="text/javaScript" src="/js/com/jquery/jquery-2.2.4.js"></script>
-    <script type="text/javaScript" src="/js/com/bootstrap/bootstrap.min.js"></script>
-    <script type="text/javaScript" src="/js/com/jquery-ui/jquery-ui.js"></script>
-    <script type="text/javaScript" src="/js/com/proj4/proj4.js"></script>
-    <script type="text/javaScript" src="/js/com/ol/ol-debug.js"></script>
-    <script type="text/javaScript" src="/js/com/moment/moment.min.js" ></script>
-    <script type="text/javaScript" src="/js/com/gua/gua.js"></script>
-    <script type="text/javaScript" src="/js/com/common.js"></script>
-    <script type="text/javaScript">
-        gua.c.CONTEXT_ROOT =  "/".replace(/\/$/, "");
-        gua.c.GEOSERVER_URL1 =  "http://eaisapp.me.go.kr/geoserver/me";
-        gua.c.GEOSERVER_URL2 =  "http://egisapp.me.go.kr/geoserver";
-        gua.date().initNow("20210326163612");
-    </script>
-<link rel="stylesheet" href="../css/map/jquery-ui/jquery-ui.theme.min.css">
-<link rel="stylesheet" href="../css/map/bootstrap-switch/bootstrap-switch.css">
-<link rel="stylesheet" href="../css/map/spectrum.css">
-<link rel="stylesheet" href="../css/map.css">
-<link rel="stylesheet" href="../css/map/custom.css">
-<script src="/js/map/bootstrap-switch.js"></script>
-<script src="/js/map/jquery.spectrum.js"></script>
-<script src="/js/jquery.pager.js"></script>
-<script src="/js/clipboard.min.js"></script>
-<script src="/js/map/layer.js"></script>
-<script src="/js/map/legend.js"></script>
-<script src="/js/map/map.js"></script>
-<script src="/js/map/search.js"></script>
+	<meta charset="utf-8">
+	<title>다음 지도 API</title>
 </head>
-<script type="text/javascript">
-var type = 'land';
-var accesskey = '';
-var permalink = '';
-</script>
-<body>  
-<!-- HEADER -->
-<div id="header">
-	
-	<button id="btn_home" type="button" class="btn_menu" title="홈"></button>
-    
-    <!-- SEARCH WRAP -->
-    <div class="search_wrap">
-        <a href="#" class="search_type">검색방식 선택</a>
-        <ul id="search_type" style="display:none;">
-            <li><a href="#">검색방식 선택</a></li>
-            <li data-item="Jibun"><a href="#">지번 검색</a></li>
-            <li data-item="Juso"><a href="#">새주소 검색</a></li>
-            <li data-item="Poi"><a href="#">장소 검색</a></li>
-            <li data-item="doyup"><a href="#">도엽 검색</a></li>
-            <li data-item="layer"><a href="#">주제도 검색</a></li>
-        </ul>
-        <input type="text" name="search_text" placeholder="(지역명, 주소입력)">
-        <button type="button" id="btn_search" title="검색">검색</button>
-    </div>
-    
-	<!-- 맵 컨트롤 버튼 -->
-    <ul class="mapbtn">
-        <li><a href="#" id="btn_map_base" class="map2d on" title="일반맵">일반맵</a></li>
-        <li><a href="#" id="btn_map_sat" class="mapsat" title="위성맵">위성맵</a></li>
-        <li><a href="#" id="btn_map_adm" class="mapadm" title="행정구역도">행정구역도</a></li>
-        <li><a href="#" id="btn_mapreset" class="mapreset" title="초기화">초기화</a></li>
-        <li><a href="#" id="btn_viewall" class="country" title="전국">전국</a></li>
-        <li><a href="#" id="btn_distance" class="distance" title="거리">거리</a></li>
-        <li><a href="#" id="btn_area" class="area" title="면적">면적</a></li>
-        <li><a data-toggle="modal" href="#url" class="url" title="URL" onclick="layer.generateKey()">URL</a></li>
-    </ul>
-    
-    <!-- 맵 확대,축소,이동 버튼 -->
-    <div id="zoom" class="mapbtn"></div>
-    
-    <!-- on 레이어 조절창 // 아래 div에 off를 추가하면 contents가 사라짐 --> 
-    <div class="control_wrap off">
-    	<div class="header">
-        	<h2>on 레이어 조절창</h2>
-        	<button id="control_toggle" type="button">레이어열기</button>
-        </div>
-        <div class="contents">
-        	<p id="legend_title">선택한 레이어를 조절합니다.</p>
-        	<div id="layer_defalt" class="adjust_wrap"> 
-        		<p>레이어를 선택해주세요!</p>
-        	</div>
-        	<div id="layer_alert" class="adjust_wrap" style="display:none;"> 
-        		<p>해당 레이어는 레이어 조절이 지원되지 않습니다.</p>
-        	</div>
-        	<div id="layer_control" class="adjust_wrap" style="display:none;">
-            	<div class="legend">
-                	<!-- 지도 -->
-                    <p class="thumb">
-                    	<img src="../images/@thumb.png" alt="토지피복지도썸네일" />
-                    </p>
-                    <!-- 색상 -->
-                    <table class="chart" style="display:none;"></table>
-                </div>
-                <ul>
-                	<li>
-                    	<label>선두께</label>
-                        <p class="thickness">
-                        	<input type="text" name="line_weight" value="1.0">
-                        </p>
-                    </li>
-                    <li>
-                    	<label>선색상</label>
-                    	<p class="input_group">
-		              		<input type="text" name="line_color" style="display:none;"/>
-		              		<input type="text" id="spectrum"/>
-		              	</p>
-                    </li>
-                    <li>
-                    	<label>라벨</label>
-                        <div class="label">
-                        	<input type="checkbox" name="switch" value="1" checked>
-                        	<input type="text" name="label_size" value="1.0">
-                        </div>
-                    </li>
-                    <li>
-                    	<label>투명도</label>
-                    	<span class="percent">투명</span>
-                    	<div class="opacity"></div>
-                    	<span class="percent">불투명</span>
-                    </li>
-                </ul>
-            </div>
-            <!-- END ADJUST WRAP -->
-            
-            <div class="btnalign">
-            	<button id="apply" type="button">적용</button>
-                <button id="reset" type="button" class="reset">초기화</button>
-            </div>
-            
-            <div class="list">
-            	<p><a id="chkall" href="#" class="ico show"></a> 전체</p>
-                 <table>
-                    <tbody id="layer_tbody"></tbody>
-                </table>
-            </div>
-            <!-- END LIST -->
-        </div>
-        <!-- END CONTENTS -->
-    </div>
-    <!-- END 레이어조절창 -->
-</div>
-<!-- END HEADER -->
+<body>
+	<div id="map" style="width:750px;height:750px;"></div>
 
-<!-- WRAP -->
-<div id="wrap" style="height:900px;">
-	
-	<!-- 지역명,주소검색 결과영역 -->
-	<div class="result_wrap" style="display:none;">
-        <p>
-        	검색결과 <span id="search_cnt">0</span> 건
-        	<button type="button" class="close" id="btn_close_result">&times;</button>
-        </p>
-        <ul id="search_result"></ul>
-        <div id="search_pager" class="pager"></div>
-        <div id="result_close" class="result_close"></div>
-    </div>
-    <!-- 검색영역 열기 -->
-    <div id="result_open" class="result_open"></div>
-    
-    <!-- 메뉴영역 -->
-    <div class="nav_wrap">
-    	<ul class="nav">
-        	<li><a href="#" title="토지피복지도" class="land"><i></i>토지피복지도</a></li>
-            <li><a href="#" title="환경주제도" class="envi"><i></i>환경주제도</a></li>
-            <!-- <li><a href="#" title="개별공간정보시스템" class="each">개별공간정보시스템</a></li> -->
-            <li><a href="#" title="토지이용규제지역&middot;지구도" class="use"><i></i>토지이용규제지역<br>&nbsp;&middot;&nbsp;<br>지구도</a></li>
-            <li><a href="#" title="생태자연도" class="eco"><i></i>생태자연도</a></li>
-        </ul>
-        <!--<p class="btnshow"><button type="button"></button></p>-->
-    </div>
-    <!-- 지도영역 -->
-    <div id="map" class="map"></div>
-    
-    <!-- SNB영역 -->
-    <!-- 아래 대메뉴에따라 변경되는 CLASS명. 토지피복 land, 환경 envi, 개별공간 each, 토지이용 use, 생태자연 eco --> 
-    <div id="category_wrap" class="category_wrap land" style="display:none;">
-    	<!-- 분류 PART1 -->
-    	<div id="category_land">
-            <p class="info">
-            	<span class="info">
-	                <a data-toggle="modal" href="#legend" style="width: 30px;">범례</a>
-	            </span>
-	            환경부 토지피복지도입니다.<br>
-	            확대해야 도엽명이 보입니다.
-                <!-- <button id="btn_legend" type="button">범례</button> -->
-            </p>
-            <ul>
-                <li><a id="land_03">대분류</a></li>
-                <li><a id="land_04">중분류</a></li>
-                <li><a id="land_05">세분류</a></li>
-            </ul>
-            <p class="info" stype="margin-right: 4px;"> ※세분류 토지피복지도는 2018년 영상 기준으로 현행화 구축된 자료이므로, 현재와 일부 차이가 있을 수 있습니다.  </p>
-            <!-- 도엽/행정구역/영역선택 -->
-			<div id="accordion" class="navsearch">
-				<h3>도엽명 / 도엽번호</h3>
-				<div class="m_doyup">
-	                <p class="meta" style="text-align: center;">
-	                    <input type="text" name="m_search_doyup">
-	                </p>
-                </div>
-                <h3>행정구역</h3>
-				<div class="m_adm">
-	                <p class="meta">
-	                	<label>시도</label>
-	                    <select name="m_sido">
-	                    	<option value="">선택</option>
-	                    </select>
-	                </p>
-	                <p class="meta">
-	                	<label>시군구</label>
-	                    <select name="m_sgg">
-	                    	<option value="">선택</option>
-	                    </select>
-	                </p>
-	                <p class="meta">
-	                	<label>읍면동</label>
-	                    <select name="m_emd">
-	                    	<option value="">선택</option>
-	                    </select>
-	                </p>
-                </div>
-                <h3>영역선택</h3>
-				<div class="m_area">
-	                <p class="meta" id="m_search_spatial" style="text-align: center;">
-	                	<a href="#" class="point" type="Point" title="점검색"><span>점</span></a>
-	                    <a href="#" class="square" type="Box" title="박스검색"><span>박스</span></a>
-	                    <a href="#" class="polygon" type="Polygon" title="폴리건검색"><span>폴리건</span></a>
-	                </p>
-				</div>
-			</div>
-            <p class="center">
-                <button id="btn_search_meta" type="button" class="search">검색</button>
-            </p>
-            <!-- END 도엽/행정구역/영역선택 -->
-        </div>
-        <div id="category_envi" style="display:none;">
-            <p class="info">
-            	환경부 환경주제도입니다.<br>
-	            레이어의 스타일을 변경할 수 있습니다.
-            </p>
-            <ul class="node">
-                <li><a id="envi_06">토지피복</a></li>
-                <li><a id="envi_01">자연환경</a></li>
-                <li><a id="envi_02">물환경</a></li>
-                <li><a id="envi_03">기후대기</a></li>
-                <li><a id="envi_04">생활환경</a></li>
-            </ul>
-        </div>
-        <div id="category_use" style="display:none;">
-            <p class="info">
-                2020년 11월 9일 자료입니다.<br>
-                확대해야 레이어가 보입니다.
-            </p>
-            <ul class="node">
-                <li><a id="use_um">환경</a></li>
-                <li><a id="use_ud">도시</a></li>
-                <li><a id="use_ue">농업</a></li>
-                <li><a id="use_uf">산림</a></li>
-                <li><a id="use_uj">수자원</a></li>
-                <li><a id="use_uo">교육문화</a></li>
-                <li><a id="use_uq">국토계획</a></li>
-                <li><a id="use_ub">지역(제주)</a></li>
-            </ul>
-        </div>
-        <div id="category_eco" style="display:none;">
-            <p class="info">
-                국립생태원 생태자연도입니다.<br>
-                확대해야 도엽명이 보입니다.
-            </p>
-            <ul class="node">
-                <li><a id="eco_09">생태자연도</a></li>
-            </ul>
-			<!-- 도엽/행정구역/영역선택 -->
-			<div id="accordionEco" class="navsearch">
-				<h3>도엽명 / 도엽번호</h3>
-				<div class="m_doyup">
-	                <p class="meta" style="text-align: center;">
-	                    <input type="text" name="m_search_doyup">
-	                </p>
-	               </div>
-				<h3>행정구역</h3>
-				<div class="m_adm">
-	                <p class="meta">
-	                	<label>시도</label>
-	                    <select name="m_sido">
-	                    	<option value="">선택</option>
-	                    </select>
-	                </p>
-	                <p class="meta">
-	                	<label>시군구</label>
-	                    <select name="m_sgg">
-	                    	<option value="">선택</option>
-	                    </select>
-	                </p>
-	                <p class="meta">
-	                	<label>읍면동</label>
-	                    <select name="m_emd">
-	                    	<option value="">선택</option>
-	                    </select>
-	                </p>
-				</div>
-	            <h3>영역선택</h3>
-				<div class="m_area">
-	                <p class="meta" id="m_search_spatial" style="text-align: center;">
-	                	<a href="#" class="point" type="Point" title="점검색"><span>점</span></a>
-	                    <a href="#" class="square" type="Box" title="박스검색"><span>박스</span></a>
-	                    <a href="#" class="polygon" type="Polygon" title="폴리건검색"><span>폴리건</span></a>
-	                </p>
-				</div>
-        	</div>
-	        <p class="center">
-				<button id="btn_search_eco" type="button" class="search">검색</button>
-	        </p>
-        </div>
-        <!-- END 도엽/행정구역/영역선택 -->
-        <!-- END 분류 PART1 -->
-        
-        <!-- 분류 PART2 -->
-        <div id="m_search" style="display:none;">
-        	<div class="h2_wrap">
-            	<h2>검색결과</h2>
-            	<span class="info">
-	                <a href="#" class="back">&#x21BB;</a>
-	            </span>
-	            <!-- 
-                <p>
-                	<button type="button" class="back">이전</button>
-                	<button type="button" class="close">창닫기</button>
-                </p>
-                -->
-            </div>
-            <p class="title">중분류 [2000~2004] 전국</p>
-            <div>
-            	<p class="total">검색결과 <span id="m_search_cnt">0</span> 건</p>
-                <table class="resultlist">
-                    <thead>
-                        <tr>
-                            <th>년도</th>
-                            <th>도엽명</th>
-                            <th>도엽번호</th>
-                            <th colspan="2">축척</th>
-                        </tr>
-                    </thead>
-                    <tbody id="m_search_result"></tbody>
-                </table>
-            </div>
-            <div id="m_search_pager" class="pager_circle">
-                <a href="#" class="pre">&lt;</a>
-                <a href="#" class="tsp">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">4</a>
-                <a href="#">5</a>
-                <a href="#" class="nex">&gt;</a>
-        	</div>
-        </div>
-        <!-- END 분류 PART2 -->
-    </div>
-    
-	<!-- 카테고리영역 컨트롤버튼 -->
-	<!-- <div class="category_btn" style="display:none;">
-	    <button type="button" id="btn_close" class="layerClose" title="레이어닫기">레이어닫기</button>
-	    <button type="button" id="btn_extend" class="layerExtend" title="확장레이어">확장레이어</button>
-	    <button type="button" id="btn_basic" class="layerBasic" title="기본레이어" style="display:none;">기본레이어</button>
-	</div> -->
-	<!-- END SNB 영역 -->
-    
-    <div class="category_btn" style="display:none;">
-       	<span class="info">
-       		<a href="#" id="btn_close" class="btn_close" title="레이어닫기">&times;</a>
-            <a href="#" id="btn_extend" class="btn_extend" title="확장레이어">&gt;|</a>
-            <a href="#" id="btn_basic" class="btn_basic" title="기본레이어" style="display:none;">|&lt;</a>
-        </span>
-    </div>
-    
-</div>
-<!-- END WRAP -->
+	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=발급받은 APP KEY를 사용하세요"></script>
+	<script>
+		var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+		    mapOption = {
+		        center: new kakao.maps.LatLng(37.56602, 126.98239), // 지도의 중심좌표
+		        level: 5, // 지도의 확대 레벨
+		        mapTypeId : kakao.maps.MapTypeId.HYBRID // 지도종류
+		    }; 
 
-<div id="dialog-message" title="환경공간정보서비스"></div>
+		// 지도를 생성한다 
+		var map = new kakao.maps.Map(mapContainer, mapOption); 
 
-<!-- 범례 -->
-<div id="legend" class="modal modal-wide fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        		<h2 class="modal-title">토지피복지도 범례</h2>
-       		</div>
-			<div class="modal-body">
-				<div class="content">
-					<img src="../images/@indextable.png" alt="범례" />
-				</div>
-			</div>
-			<div class="modal-footer"></div>
-		</div>
-	</div>
-</div>
-<!-- END 범례 -->
+		// 지도 타입 변경 컨트롤을 생성한다
+		var mapTypeControl = new kakao.maps.MapTypeControl();
 
-<!-- URL -->
-<div id="url" class="modal modal-wide fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        		<h2 class="modal-title">URL을 통한 자료 설정 저장</h2>
-       		</div>
-			<div class="modal-body">
-				<div class="content">
-					<input type="text" id="input_url" name="input_url" class="form-control">
-					<button class="btn" data-clipboard-target="#input_url"></button>
-				</div>
-			</div>
-			<div class="modal-footer"></div>
-		</div>
-	</div>
-</div>
-<!-- END URL -->
+		// 지도의 상단 우측에 지도 타입 변경 컨트롤을 추가한다
+		map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);	
 
+		// 지도에 확대 축소 컨트롤을 생성한다
+		var zoomControl = new kakao.maps.ZoomControl();
+
+		// 지도의 우측에 확대 축소 컨트롤을 추가한다
+		map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+		// 지도 중심 좌표 변화 이벤트를 등록한다
+		kakao.maps.event.addListener(map, 'center_changed', function () {
+			console.log('지도의 중심 좌표는 ' + map.getCenter().toString() +' 입니다.');
+		});
+
+		// 지도 확대 레벨 변화 이벤트를 등록한다
+		kakao.maps.event.addListener(map, 'zoom_changed', function () {
+			console.log('지도의 현재 확대레벨은 ' + map.getLevel() +'레벨 입니다.');
+		});
+
+		// 지도 영역 변화 이벤트를 등록한다
+		kakao.maps.event.addListener(map, 'bounds_changed', function () {
+			var mapBounds = map.getBounds(),
+				message = '지도의 남서쪽, 북동쪽 영역좌표는 ' +
+							mapBounds.toString() + '입니다.';
+
+			console.log(message);	
+		});
+
+		// 지도 시점 변화 완료 이벤트를 등록한다
+		kakao.maps.event.addListener(map, 'idle', function () {
+			var message = '지도의 중심좌표는 ' + map.getCenter().toString() + ' 이고,' + 
+							'확대 레벨은 ' + map.getLevel() + ' 레벨 입니다.';
+			console.log(message);
+		});
+
+		// 지도 클릭 이벤트를 등록한다 (좌클릭 : click, 우클릭 : rightclick, 더블클릭 : dblclick)
+		kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+			console.log('지도에서 클릭한 위치의 좌표는 ' + mouseEvent.latLng.toString() + ' 입니다.');
+		});	
+
+		// 지도 드래깅 이벤트를 등록한다 (드래그 시작 : dragstart, 드래그 종료 : dragend)
+		kakao.maps.event.addListener(map, 'drag', function () {
+			var message = '지도를 드래그 하고 있습니다. ' + 
+							'지도의 중심 좌표는 ' + map.getCenter().toString() +' 입니다.';
+			console.log(message);
+		});
+
+	</script>
 </body>
 </html>
